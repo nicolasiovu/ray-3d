@@ -1,12 +1,22 @@
-OBJS = engine.cpp
+SRC = main.cpp engine.cpp
+OBJ = $(SRC:.cpp=.o)
+DEPS = engine.h
 
 CC = g++
 
-COMPILER_FLAGs = -w
+COMPILER_FLAGs = -std=c++17 -Wall
 
 LINKER_FLAGS = -lSDL2
 
-OBJ_NAME = engine
+TARGET = engine
 
-all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+all : $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) $(LINKER_FLAGS) -o $@
+
+%.o: %.cpp $(DEPS)
+	$(CC) -c $< $(CFLAGS)
+
+clean:
+	rm -f *.o $(TARGET)
