@@ -49,49 +49,21 @@ void Engine::drawPixel(int x, int y, uint32_t color) {
 	}
 }
 
-void Engine::drawLine(Vec2 p1, Vec2 p2, uint32_t color) {
-	int x0 = p1.x;
-	int y0 = p1.y;
-	int x1 = p2.x;
-	int y1 = p2.y;
-
-	bool steep = abs(y1 - y0) > abs(x1 - x0); 
-	
-	if (steep) {
-		std::swap(x0, y0);
-		std::swap(x1, y1);
-	}
-
-	if (x0 > x1) {
-		std::swap(x0, x1);
-		std::swap(y0, y1);
-	}
-
-	int dx = x1 - x0;
-	int dy = abs(y1 - y0);
-	int error = dx / 2;
-	int ystep = (y0 < y1) ? 1: -1;
-	int y = y0;
-
-	for (int x = x0; x <= x1; ++x) {
-		if (steep) {
-			drawPixel(y, x, color);
-		} else {
-			drawPixel(x, y, color);
-		}
-
-		error -= dy;
-		if (error < 0) {
-			y += ystep;
-			error += dx;
-		}
-	}
-}
-
 void Engine::drawTriangle(Vec2 a, Vec2 b, Vec2 c, uint32_t color) {
-	drawLine(a, b, color);
-	drawLine(b, c, color);
-	drawLine(a, c, color);
+	// Get the bounding box
+	int minX = std::max(0, (int) std::floor(std::min({a.x, b.x, c.x})));
+	int maxX = std::min(width - 1, (int) std::ceil(std::max(a.x, b.x, c.x});
+	int minY = std::min({(int) std::floor(a.y), (int) std::floor(b.y), (int) std::floor(c.y)});
+	int maxY = std::min({(int) std::ceil(a.y), (int) std::ceil(b.y), (int) std::ceil(c.y)});
+	
+	// Get the area of ABC
+	float ABC = triArea(a, b, c);
+
+	for (int x = minX; x <=  maxX; x++) {
+		for (int y = minY; y <= maxY; y++) {
+			
+		}	
+	}
 }
 
 void Engine::update(float time) {
@@ -152,6 +124,8 @@ void Engine::run() {
 		render();
 	}
 }
+
+// i love jackson
 
 void Engine::shutdown() {
 	SDL_DestroyTexture(texture);
