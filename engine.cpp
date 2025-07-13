@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "math.h"
 #include <iostream>
 #include <algorithm>
 
@@ -52,16 +53,25 @@ void Engine::drawPixel(int x, int y, uint32_t color) {
 void Engine::drawTriangle(Vec2 a, Vec2 b, Vec2 c, uint32_t color) {
 	// Get the bounding box
 	int minX = std::max(0, (int) std::floor(std::min({a.x, b.x, c.x})));
-	int maxX = std::min(width - 1, (int) std::ceil(std::max(a.x, b.x, c.x});
-	int minY = std::min({(int) std::floor(a.y), (int) std::floor(b.y), (int) std::floor(c.y)});
-	int maxY = std::min({(int) std::ceil(a.y), (int) std::ceil(b.y), (int) std::ceil(c.y)});
+	int maxX = std::min(width - 1, (int) std::ceil(std::max({a.x, b.x, c.x})));
+	int minY = std::max(0, (int) std::floor(std::min({a.y, b.y, c.y})));
+	int maxY = std::min(height - 1, (int) std::ceil(std::max({a.y, b.y, c.y})));
 	
-	// Get the area of ABC
 	float ABC = triArea(a, b, c);
+
+	if (ABC == 0) {
+		return;
+	}
 
 	for (int x = minX; x <=  maxX; x++) {
 		for (int y = minY; y <= maxY; y++) {
+			Vec2 p = {(float) x, (float) y};
 			
+			Vec3 verdict = barycentric(p, a, b, c);
+
+			if (verdict.x >= 0 && verdict.y >= 0 && verdict.z >= 0) {
+				drawPixel(x, y, color);
+			}
 		}	
 	}
 }
@@ -124,8 +134,6 @@ void Engine::run() {
 		render();
 	}
 }
-
-// i love jackson
 
 void Engine::shutdown() {
 	SDL_DestroyTexture(texture);

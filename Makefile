@@ -1,6 +1,6 @@
-SRC = main.cpp engine.cpp
+SRC = main.cpp engine.cpp math.cpp
 OBJ = $(SRC:.cpp=.o)
-DEPS = engine.h
+DEPS = engine.h math.h
 
 CC = g++
 
